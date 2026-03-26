@@ -1,4 +1,19 @@
+import { readFileSync } from "node:fs";
 import { createHmac } from "node:crypto";
+
+// Load .env
+try {
+  const env = readFileSync(new URL("../.env", import.meta.url), "utf-8");
+  for (const line of env.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eq = trimmed.indexOf("=");
+    if (eq < 1) continue;
+    const key = trimmed.slice(0, eq);
+    const val = trimmed.slice(eq + 1);
+    if (!process.env[key]) process.env[key] = val;
+  }
+} catch {}
 
 const WEBHOOK_URL = process.env.WEBHOOK_URL ?? "http://localhost:3000/webhook/creem";
 const WEBHOOK_SECRET = process.env.CREEM_WEBHOOK_SECRET ?? "whsec_demo_secret";
