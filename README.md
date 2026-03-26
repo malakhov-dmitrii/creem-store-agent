@@ -99,7 +99,9 @@ When a cancellation event arrives, Claude Haiku analyzes the customer:
 
 ## Demo
 
-> Video demo coming soon — run `npm run demo:server` + `npm run demo` locally to see the full flow.
+> [Read the full tutorial on dev.to](https://dev.to/hennessy811/building-an-ai-agent-that-saves-your-saas-revenue-nkf)
+>
+> Run locally: `npm run demo:server` + `npm run demo` to see the full flow.
 
 ## Setup
 
