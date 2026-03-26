@@ -99,9 +99,11 @@ When a cancellation event arrives, Claude Haiku analyzes the customer:
 
 ## Demo
 
-> [Read the full tutorial on dev.to](https://dev.to/hennessy811/building-an-ai-agent-that-saves-your-saas-revenue-nkf)
->
-> Run locally: `npm run demo:server` + `npm run demo` to see the full flow.
+[![Demo Video](https://img.youtube.com/vi/M9A876D5JEE/maxresdefault.jpg)](https://youtube.com/shorts/M9A876D5JEE)
+
+[Watch the demo](https://youtube.com/shorts/M9A876D5JEE) | [Read the tutorial on dev.to](https://dev.to/hennessy811/building-an-ai-agent-that-saves-your-saas-revenue-nkf)
+
+Run locally: `npm run demo:server` + `npm run demo` to see the full flow.
 
 ## Setup
 
