@@ -1,6 +1,6 @@
 # Creem Store Agent — OpenClaw Skill
 
-[![Tests](https://img.shields.io/badge/tests-103%20passing-brightgreen)](https://github.com/malakhov-dmitrii/creem-store-agent) [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-103%20passing-brightgreen)](https://github.com/malakhov-dmitrii/creem-store-agent) [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/) [![ClawHub](https://img.shields.io/badge/ClawHub-creem--store--agent-orange)](https://clawhub.ai/skills/creem-store-agent) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 AI-powered monitoring for your [Creem](https://creem.io) store. Sends real-time Telegram alerts for sales, subscriptions, disputes, and refunds. Uses Claude AI to analyze churn events and autonomously recommend retention actions — create discounts or pause subscriptions with one tap.
 
@@ -125,6 +125,12 @@ Or manually:
 
 ```bash
 git clone https://github.com/malakhov-dmitrii/creem-store-agent
+```
+
+Or via ClawHub:
+
+```bash
+clawhub install creem-store-agent
 cd creem-store-agent
 npm install
 npm run build

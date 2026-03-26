@@ -7,7 +7,10 @@ AI-powered OpenClaw skill that monitors your Creem store in real time. Receives 
 **Article:** https://dev.to/hennessy811/building-an-ai-agent-that-saves-your-saas-revenue-nkf
 **Video:** https://youtube.com/shorts/M9A876D5JEE
 
+**ClawHub:** https://clawhub.ai/skills/creem-store-agent (`clawhub install creem-store-agent`)
+
 **Highlights:**
+- First Creem skill on ClawHub
 - All 13 Creem webhook events with real-time Telegram alerts
 - AI churn analysis via Claude Haiku with rule-based fallback
 - Autonomous actions: retention discounts + subscription pause

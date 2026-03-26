@@ -2,7 +2,19 @@
 name: creem-store-agent
 description: "AI-powered Creem store monitor — alerts, churn analysis, autonomous actions via Telegram"
 user-invocable: true
-metadata: {"openclaw":{"emoji":"🍦","requires":{"bins":["node"],"env":["CREEM_API_KEY","CREEM_WEBHOOK_SECRET","TELEGRAM_BOT_TOKEN","TELEGRAM_CHAT_ID","ANTHROPIC_API_KEY"]},"primaryEnv":"CREEM_API_KEY"}}
+metadata:
+  openclaw:
+    emoji: "🍦"
+    primaryEnv: CREEM_API_KEY
+    requires:
+      bins:
+        - node
+      env:
+        - CREEM_API_KEY
+        - CREEM_WEBHOOK_SECRET
+        - TELEGRAM_BOT_TOKEN
+        - TELEGRAM_CHAT_ID
+        - ANTHROPIC_API_KEY
 ---
 
 # Creem Store Agent
