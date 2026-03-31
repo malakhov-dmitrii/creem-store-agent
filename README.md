@@ -1,6 +1,6 @@
 # Creem Store Agent — OpenClaw Skill
 
-[![Tests](https://img.shields.io/badge/tests-103%20passing-brightgreen)](https://github.com/malakhov-dmitrii/creem-store-agent) [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/) [![ClawHub](https://img.shields.io/badge/ClawHub-creem--store--agent-orange)](https://clawhub.ai/skills/creem-store-agent) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-138%20passing-brightgreen)](https://github.com/malakhov-dmitrii/creem-store-agent) [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/) [![ClawHub](https://img.shields.io/badge/ClawHub-creem--store--agent-orange)](https://clawhub.ai/skills/creem-store-agent) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 AI-powered monitoring for your [Creem](https://creem.io) store. Sends real-time Telegram alerts for sales, subscriptions, disputes, and refunds. Uses Claude AI to analyze churn events and autonomously recommend retention actions — create discounts or pause subscriptions with one tap.
 
@@ -189,13 +189,13 @@ Fallback: If Claude API fails or returns unparseable response, rule-based logic 
 ## Testing
 
 ```bash
-npm test                # Run all 103 tests
+npm test                # Run all 138 tests
 npm run test:watch      # Watch mode
 npm run test:coverage   # Coverage report
 npm run typecheck       # TypeScript type checking
 ```
 
-103 tests across 7 test files covering all modules.
+138 tests across 10 test files covering all modules.
 
 ## Tech Stack
 

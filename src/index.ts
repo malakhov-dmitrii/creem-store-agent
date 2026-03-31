@@ -6,11 +6,16 @@ import { analyzeChurn } from "./llm-analyzer.js";
 import { executeAction, formatActionResult } from "./action-executor.js";
 import { createTelegramBot, formatChurnAlert, buildInlineKeyboard } from "./telegram.js";
 import { extractChurnContext, shouldAutoExecute } from "./index-helpers.js";
+import { loadState, saveState, takeDailySnapshot, addSnapshot, todayStr } from "./store-state.js";
+import type { StoreState } from "./store-state.js";
+import { updateStateFromEvent } from "./store-metrics.js";
+import { formatStatusReport, formatRevenueReport, formatDailyDigest } from "./commands.js";
 
-// In-memory store for pending LLM decisions awaiting user confirmation
 const pendingDecisions = new Map<string, { decision: LLMDecision; context: ChurnContext }>();
 
 const AUTO_EXECUTE_THRESHOLD = 0.8;
+const DIGEST_HOUR = 9; // Send daily digest at 9 AM
+const DIGEST_CHECK_INTERVAL = 60 * 60 * 1000; // Check every hour
 
 export async function onStartup(ctx: SkillContext): Promise<void> {
   const {
@@ -23,7 +28,7 @@ export async function onStartup(ctx: SkillContext): Promise<void> {
 
   // --- Initialize SDKs (dynamic imports to avoid bundling issues) ---
   const { Creem } = await import("creem");
-  const creem = new Creem({ apiKey: CREEM_API_KEY, serverIdx: 1 }); // test mode
+  const creem = new Creem({ apiKey: CREEM_API_KEY, serverIdx: 1 });
 
   const Anthropic = (await import("@anthropic-ai/sdk")).default;
   const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
@@ -32,8 +37,20 @@ export async function onStartup(ctx: SkillContext): Promise<void> {
   const rawBot = new TelegramBotLib(TELEGRAM_BOT_TOKEN, { polling: true });
   const bot = createTelegramBot(rawBot, TELEGRAM_CHAT_ID);
 
+  // --- Load persisted state ---
+  const statePath = ctx.config.STATE_PATH ?? "data/store-state.json";
+  let state: StoreState = loadState(statePath);
+
+  function persistState(): void {
+    saveState(statePath, state);
+  }
+
   // --- Event Handler ---
   async function handleEvent(payload: CreemWebhookPayload): Promise<void> {
+    // Update store metrics from every event
+    state = updateStateFromEvent(state, payload);
+    persistState();
+
     const classified = classifyEvent(payload);
 
     if (classified.category === "simple") {
@@ -49,7 +66,6 @@ export async function onStartup(ctx: SkillContext): Promise<void> {
 
     const decision = await analyzeChurn(churnCtx, anthropic as any);
 
-    // Send churn alert with inline buttons
     const alertMsg = formatChurnAlert(churnCtx, decision);
     const keyboard = buildInlineKeyboard(churnCtx.subscriptionId, decision.action);
 
@@ -58,13 +74,11 @@ export async function onStartup(ctx: SkillContext): Promise<void> {
       ...(keyboard.length > 0 ? { reply_markup: { inline_keyboard: keyboard } } : {}),
     });
 
-    // Auto-execute if confidence is high enough
     if (shouldAutoExecute(decision, AUTO_EXECUTE_THRESHOLD)) {
       const result = await executeAction(decision, churnCtx, creem as any);
       const resultMsg = formatActionResult(result, churnCtx);
       await bot.sendMessage(`🤖 Auto-executed (confidence ${Math.round(decision.confidence * 100)}%):\n${resultMsg}`);
     } else {
-      // Store for manual approval
       pendingDecisions.set(churnCtx.subscriptionId, { decision, context: churnCtx });
     }
   }
@@ -105,14 +119,41 @@ export async function onStartup(ctx: SkillContext): Promise<void> {
     }
   });
 
-  // --- Telegram commands ---
+  // --- Telegram commands (real data, not stubs) ---
   bot.onText(/\/creem-report/, async () => {
-    await bot.sendMessage("📊 Daily Report\n(Connect to Creem dashboard for full stats)");
+    await bot.sendMessage(formatRevenueReport(state));
   });
 
   bot.onText(/\/creem-status/, async () => {
-    await bot.sendMessage("✅ Creem Store Agent is running\nWebhook: /webhook/creem");
+    await bot.sendMessage(formatStatusReport(state));
   });
+
+  // --- Daily digest scheduler ---
+  let lastDigestDate = "";
+
+  const digestInterval = setInterval(() => {
+    const now = new Date();
+    const today = todayStr();
+
+    if (now.getHours() === DIGEST_HOUR && lastDigestDate !== today) {
+      lastDigestDate = today;
+
+      // Take snapshot before sending digest
+      const snapshot = takeDailySnapshot(state);
+      state = addSnapshot(state, snapshot);
+      persistState();
+
+      bot.sendMessage(formatDailyDigest(state)).catch((err) =>
+        ctx.log.error(`Daily digest error: ${err}`)
+      );
+
+      // Reset daily counters
+      state = { ...state, todayRevenueCents: 0, todayTransactionCount: 0 };
+      persistState();
+
+      ctx.log.info(`Daily digest sent for ${today}`);
+    }
+  }, DIGEST_CHECK_INTERVAL);
 
   // --- Register webhook route ---
   const webhookHandler = createWebhookHandler({
@@ -126,10 +167,15 @@ export async function onStartup(ctx: SkillContext): Promise<void> {
     handler: webhookHandler,
   });
 
+  // Store interval ref for cleanup
+  (ctx as any).__digestInterval = digestInterval;
+
   ctx.log.info("Creem Store Agent started — webhook registered at /webhook/creem");
 }
 
 export async function onShutdown(ctx: SkillContext): Promise<void> {
   ctx.log.info("Creem Store Agent shutting down");
+  const interval = (ctx as any).__digestInterval;
+  if (interval) clearInterval(interval);
   pendingDecisions.clear();
 }

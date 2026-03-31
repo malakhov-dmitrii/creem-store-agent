@@ -18,6 +18,9 @@ import { createWebhookHandler } from "../src/webhook-handler.js";
 import { classifyEvent } from "../src/event-processor.js";
 import { formatEventAlert } from "../src/rule-engine.js";
 import { analyzeChurn } from "../src/llm-analyzer.js";
+import { emptyState } from "../src/store-state.js";
+import { updateStateFromEvent } from "../src/store-metrics.js";
+import { formatStatusReport, formatRevenueReport } from "../src/commands.js";
 import { executeAction, formatActionResult } from "../src/action-executor.js";
 import { createTelegramBot, formatChurnAlert, buildInlineKeyboard } from "../src/telegram.js";
 import { extractChurnContext, shouldAutoExecute } from "../src/index-helpers.js";
@@ -27,6 +30,7 @@ const PORT = Number(process.env.PORT ?? 3000);
 const AUTO_EXECUTE_THRESHOLD = 0.8;
 
 const pendingDecisions = new Map<string, { decision: LLMDecision; context: ChurnContext }>();
+let state = emptyState();
 
 async function main(): Promise<void> {
   const {
@@ -98,11 +102,11 @@ async function main(): Promise<void> {
 
     // Telegram commands
     rawBot.onText(/\/creem-status/, async () => {
-      await bot.sendMessage(`✅ Creem Store Agent is running\nWebhook: http://localhost:${PORT}/webhook/creem`);
+      await bot.sendMessage(formatStatusReport(state));
     });
 
     rawBot.onText(/\/creem-report/, async () => {
-      await bot.sendMessage("📊 Daily Report\n(Connect to Creem dashboard for full stats)");
+      await bot.sendMessage(formatRevenueReport(state));
     });
   } else {
     console.log("⚠️  TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not set — logging to console only");
@@ -122,6 +126,9 @@ async function main(): Promise<void> {
 
   // --- Event handler ---
   async function handleEvent(payload: CreemWebhookPayload): Promise<void> {
+    // Update store metrics from every event
+    state = updateStateFromEvent(state, payload);
+
     const classified = classifyEvent(payload);
 
     if (classified.category === "simple") {
