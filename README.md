@@ -1,6 +1,6 @@
 # Creem Store Agent — OpenClaw Skill
 
-[![Tests](https://img.shields.io/badge/tests-138%20passing-brightgreen)](https://github.com/malakhov-dmitrii/creem-store-agent) [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/) [![ClawHub](https://img.shields.io/badge/ClawHub-creem--store--agent-orange)](https://clawhub.ai/skills/creem-store-agent) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-138%20passing-brightgreen)](https://github.com/malakhov-dmitrii/creem-store-agent) [![Coverage](https://img.shields.io/badge/coverage-84%25-green)](https://github.com/malakhov-dmitrii/creem-store-agent) [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue)](https://www.typescriptlang.org/) [![ClawHub](https://img.shields.io/badge/ClawHub-creem--store--agent-orange)](https://clawhub.ai/skills/creem-store-agent) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 AI-powered monitoring for your [Creem](https://creem.io) store. Sends real-time Telegram alerts for sales, subscriptions, disputes, and refunds. Uses Claude AI to analyze churn events and autonomously recommend retention actions — create discounts or pause subscriptions with one tap.
 
@@ -99,9 +99,9 @@ When a cancellation event arrives, Claude Haiku analyzes the customer:
 
 ## Demo
 
-[![Demo Video](https://img.youtube.com/vi/M9A876D5JEE/maxresdefault.jpg)](https://youtube.com/shorts/M9A876D5JEE)
+[![Demo Video](https://img.youtube.com/vi/LkCxjkBaDqQ/maxresdefault.jpg)](https://youtu.be/LkCxjkBaDqQ)
 
-[Watch the demo](https://youtube.com/shorts/M9A876D5JEE) | [Read the tutorial on dev.to](https://dev.to/hennessy811/building-an-ai-agent-that-saves-your-saas-revenue-nkf)
+[Watch the demo](https://youtu.be/LkCxjkBaDqQ) | [Read the tutorial on dev.to](https://dev.to/hennessy811/building-an-ai-agent-that-saves-your-saas-revenue-nkf)
 
 Run locally: `npm run demo:server` + `npm run demo` to see the full flow.
 
